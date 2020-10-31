@@ -34,8 +34,9 @@
             this.encryptFunction = new System.Windows.Forms.RadioButton();
             this.decryptFunction = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.passwordTextbox = new System.Windows.Forms.TextBox();
             this.startButton = new System.Windows.Forms.Button();
+            this.showPasswordButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -98,30 +99,42 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Password";
             // 
-            // textBox1
+            // passwordTextbox
             // 
-            this.textBox1.Location = new System.Drawing.Point(81, 81);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(257, 20);
-            this.textBox1.TabIndex = 6;
+            this.passwordTextbox.Location = new System.Drawing.Point(81, 81);
+            this.passwordTextbox.Name = "passwordTextbox";
+            this.passwordTextbox.PasswordChar = '•';
+            this.passwordTextbox.Size = new System.Drawing.Size(257, 20);
+            this.passwordTextbox.TabIndex = 6;
             // 
             // startButton
             // 
             this.startButton.Location = new System.Drawing.Point(13, 107);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(406, 38);
+            this.startButton.Size = new System.Drawing.Size(325, 38);
             this.startButton.TabIndex = 7;
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
+            // 
+            // showPasswordButton
+            // 
+            this.showPasswordButton.Location = new System.Drawing.Point(344, 79);
+            this.showPasswordButton.Name = "showPasswordButton";
+            this.showPasswordButton.Size = new System.Drawing.Size(75, 23);
+            this.showPasswordButton.TabIndex = 8;
+            this.showPasswordButton.Text = "Show";
+            this.showPasswordButton.UseVisualStyleBackColor = true;
+            this.showPasswordButton.Click += new System.EventHandler(this.showPasswordButton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(433, 160);
+            this.Controls.Add(this.showPasswordButton);
             this.Controls.Add(this.startButton);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.passwordTextbox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.decryptFunction);
             this.Controls.Add(this.encryptFunction);
@@ -143,8 +156,9 @@
         private System.Windows.Forms.RadioButton encryptFunction;
         private System.Windows.Forms.RadioButton decryptFunction;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox passwordTextbox;
         private System.Windows.Forms.Button startButton;
+        private System.Windows.Forms.Button showPasswordButton;
     }
 }
 
