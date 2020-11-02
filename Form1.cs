@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace Rode_Opdracht_Encrypter
 {
@@ -59,17 +60,35 @@ namespace Rode_Opdracht_Encrypter
                 return;
             }
 
-            try
+            //Random nummer voor de IV
+            Random rN = new Random();
+            byte[] randomNumber = BitConverter.GetBytes(rN.Next(0, 10));
+
+            //Encrypt functie hierzo
+            if (encryptFunction.Checked)
             {
-                //Verzamel de inhoud van het bestand, het wachtwoord en de key
-                byte[] fileData = File.ReadAllBytes(filepathTextbox.Text);
-                byte[] passwordTmp = Encoding.ASCII.GetBytes(passwordTextbox.Text);
-                byte[] key = new byte [fileData.Length];
-            }
-            catch
-            {
-                MessageBox.Show("Couldn't read file. Please close other programs");
-                return;
+                try
+                {
+                    //Verzamel de inhoud van het bestand, het wachtwoord en de key
+                    byte[] fileData = File.ReadAllBytes(filepathTextbox.Text);
+                    byte[] passwordTmp = Encoding.ASCII.GetBytes(passwordTextbox.Text);
+                    byte[] key = new byte[fileData.Length];
+
+                    using (Aes aesAlgoritm = Aes.Create())
+                    {
+
+                        aesAlgoritm.Key = passwordTmp;
+                        aesAlgoritm.IV = randomNumber;
+
+                        ICryptoTransform encryptor = aesAlgoritm.CreateEncryptor(aesAlgoritm.Key, aesAlgoritm.IV);
+                    }
+                    
+                }
+                catch
+                {
+                    MessageBox.Show("Couldn't read file. Please close other programs");
+                    return;
+                }
             }
         }
 
