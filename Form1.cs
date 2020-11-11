@@ -60,33 +60,45 @@ namespace Rode_Opdracht_Encrypter
                 return;
             }
 
-            //Random nummer voor de IV
-            Random rN = new Random();
-            byte[] randomNumber = BitConverter.GetBytes(rN.Next(0, 10));
-
             //Encrypt functie hierzo
             if (encryptFunction.Checked)
             {
                 try
                 {
-                    //Verzamel de inhoud van het bestand, het wachtwoord en de key
-                    byte[] fileData = File.ReadAllBytes(filepathTextbox.Text);
-                    byte[] passwordTmp = Encoding.ASCII.GetBytes(passwordTextbox.Text);
-                    byte[] key = new byte[fileData.Length];
+                    //Verzamel de inhoud van het bestand en het wachtwoord
+                    var fileDataOpen = File.OpenRead(filepathTextbox.Text);
+                    var fileDataSend = File.Create(filepathTextbox.Text);
+                    byte[] password = Encoding.ASCII.GetBytes(passwordTextbox.Text);
 
+                    //Encryptie
                     using (Aes aesAlgoritm = Aes.Create())
                     {
-
-                        aesAlgoritm.Key = passwordTmp;
-                        aesAlgoritm.IV = randomNumber;
+                        aesAlgoritm.Key = password;
 
                         ICryptoTransform encryptor = aesAlgoritm.CreateEncryptor(aesAlgoritm.Key, aesAlgoritm.IV);
+
+                        using (var cryptoStream = new CryptoStream(fileDataSend, encryptor, CryptoStreamMode.Write))
+                        {
+                            fileDataOpen.CopyTo(cryptoStream);
+                        }
                     }
                     
                 }
                 catch
                 {
                     MessageBox.Show("Couldn't read file. Please close other programs");
+                    return;
+                }
+            }
+            if (decryptFunction.Checked)
+            {
+                try
+                {
+
+                }
+                catch
+                {
+                    MessageBox.Show("Make sure you selected the right file");
                     return;
                 }
             }
