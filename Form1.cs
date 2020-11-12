@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Rode_Opdracht_Encrypter
 {
@@ -54,53 +48,66 @@ namespace Rode_Opdracht_Encrypter
                 MessageBox.Show("Please select a file to encrypt or decrypt");
                 return;
             }
+            /*
             if (String.IsNullOrEmpty(passwordTextbox.Text))
             {
                 MessageBox.Show("Please enter a password");
                 return;
             }
-
-            //Encrypt functie hierzo
+            */
+            //Encrypt gedeelte
             if (encryptFunction.Checked)
             {
-                try
-                {
-                    //Verzamel de inhoud van het bestand en het wachtwoord
-                    var fileDataOpen = File.OpenRead(filepathTextbox.Text);
-                    var fileDataSend = File.Create(filepathTextbox.Text);
-                    byte[] password = Encoding.ASCII.GetBytes(passwordTextbox.Text);
-
-                    //Encryptie
-                    using (Aes aesAlgoritm = Aes.Create())
+                //try
+                //{
+                    //Verzamel de inhoud van het bestand en het wachtwoord met daarna encryptie
+                    using (var fileDataOpen = File.OpenRead(filepathTextbox.Text))
+                    using (var aesCrypto = new AesCryptoServiceProvider())
                     {
-                        aesAlgoritm.Key = password;
-
-                        ICryptoTransform encryptor = aesAlgoritm.CreateEncryptor(aesAlgoritm.Key, aesAlgoritm.IV);
-
-                        using (var cryptoStream = new CryptoStream(fileDataSend, encryptor, CryptoStreamMode.Write))
+                        HashAlgorithm hash = MD5.Create();
+                        aesCrypto.Key = hash.ComputeHash(Encoding.Unicode.GetBytes(filepathTextbox.Text));
+                        
+                        using (var createCrypto = aesCrypto.CreateEncryptor(aesCrypto.Key,aesCrypto.IV))
+                        using (var fileDataSend = File.Create(filepathTextbox.Text + " Encrypted"))
+                        using (var cryptoStream = new CryptoStream(fileDataSend, createCrypto, CryptoStreamMode.Write))
                         {
                             fileDataOpen.CopyTo(cryptoStream);
                         }
                     }
-                    
-                }
+                /*}
                 catch
                 {
-                    MessageBox.Show("Couldn't read file. Please close other programs");
+                    MessageBox.Show("Couldn't read the file. Please close other programs");
                     return;
-                }
+                }*/
             }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //Probeer hier een logische volgorde van te maken want op het moment kopt de volgorde nog niet
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             if (decryptFunction.Checked)
             {
-                try
-                {
+                //try
+                //{
+                    //Verzamel de inhoud van het bestand en het wachtwoord met daarna decryptie
+                    using (var fileDataOpen = File.OpenRead(filepathTextbox.Text))
+                    using (var aesCrypto = new AesCryptoServiceProvider())
+                    {
+                        HashAlgorithm hash = MD5.Create();
+                        aesCrypto.Key = hash.ComputeHash(Encoding.Unicode.GetBytes(filepathTextbox.Text));
 
-                }
+                        using (var createDecrypto = aesCrypto.CreateDecryptor(aesCrypto.Key, aesCrypto.IV))
+                        using (var fileDataSend = File.Create(filepathTextbox.Text + "Decrypted"))
+                        using (var cryptoStream = new CryptoStream(fileDataSend, createDecrypto, CryptoStreamMode.Write))
+                        {
+                            fileDataOpen.CopyTo(cryptoStream);
+                        }
+                    }
+                /*}
                 catch
                 {
                     MessageBox.Show("Make sure you selected the right file");
                     return;
-                }
+                }*/
             }
         }
 
@@ -116,7 +123,7 @@ namespace Rode_Opdracht_Encrypter
 
             if (showPasswordButton.Text == "Hide")
             {
-                passwordTextbox.PasswordChar = (char) '•';
+                passwordTextbox.PasswordChar = (char)'•';
                 showPasswordButton.Text = "Show";
                 return;
             }
