@@ -60,13 +60,14 @@ namespace Rode_Opdracht_Encrypter
             {
                 //try
                 //{
-                    //Verzamel de inhoud van het bestand en het wachtwoord met daarna encryptie
+                    //Collect the content of file and password and then encrypt
                     using (var fileDataOpen = File.OpenRead(filepathTextbox.Text))
                     using (var aesCrypto = new AesCryptoServiceProvider())
                     {
                         HashAlgorithm hash = MD5.Create();
-                        aesCrypto.Key = hash.ComputeHash(Encoding.Unicode.GetBytes(filepathTextbox.Text));
-                        
+                        aesCrypto.Key = hash.ComputeHash(Encoding.Unicode.GetBytes(passwordTextbox.Text));
+                        aesCrypto.Padding = PaddingMode.PKCS7;
+
                         using (var createCrypto = aesCrypto.CreateEncryptor(aesCrypto.Key,aesCrypto.IV))
                         using (var fileDataSend = File.Create(filepathTextbox.Text + " Encrypted"))
                         using (var cryptoStream = new CryptoStream(fileDataSend, createCrypto, CryptoStreamMode.Write))
@@ -82,34 +83,40 @@ namespace Rode_Opdracht_Encrypter
                 }*/
             }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            //Probeer hier een logische volgorde van te maken want op het moment kopt de volgorde nog niet
+            //Decrypter, not yet done
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             if (decryptFunction.Checked)
             {
                 //try
                 //{
-                    //Verzamel de inhoud van het bestand en het wachtwoord met daarna decryptie
-                    using (var fileDataOpen = File.OpenRead(filepathTextbox.Text))
-                    using (var aesCrypto = new AesCryptoServiceProvider())
-                    {
-                        HashAlgorithm hash = MD5.Create();
-                        aesCrypto.Key = hash.ComputeHash(Encoding.Unicode.GetBytes(filepathTextbox.Text));
+                //Collect the data from file and password to decrypt
+                using (var fileDataOpen = File.OpenRead(filepathTextbox.Text))
+                using (var aesCrypto = new AesCryptoServiceProvider())
+                {
+                    HashAlgorithm hash = MD5.Create();
+                    aesCrypto.Key = hash.ComputeHash(Encoding.Unicode.GetBytes(passwordTextbox.Text));
+                    aesCrypto.Padding = PaddingMode.PKCS7;
 
-                        using (var createDecrypto = aesCrypto.CreateDecryptor(aesCrypto.Key, aesCrypto.IV))
-                        using (var fileDataSend = File.Create(filepathTextbox.Text + "Decrypted"))
-                        using (var cryptoStream = new CryptoStream(fileDataSend, createDecrypto, CryptoStreamMode.Write))
+                    using (var createDecrypto = aesCrypto.CreateDecryptor(aesCrypto.Key, aesCrypto.IV))
+                    using (var fileDataSend = File.Create(filepathTextbox.Text.Replace(" Encrypted", " Decrypted")))
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        using (var cryptoStream = new CryptoStream(fileDataOpen, createDecrypto, CryptoStreamMode.Read))
                         {
-                            fileDataOpen.CopyTo(cryptoStream);
+                            cryptoStream.CopyTo(fileDataSend);
                         }
-                    }
+                    } 
+                }
+            }
                 /*}
                 catch
                 {
                     MessageBox.Show("Make sure you selected the right file");
                     return;
                 }*/
-            }
+            
         }
+    
 
         private void showPasswordButton_Click(object sender, EventArgs e)
         {
